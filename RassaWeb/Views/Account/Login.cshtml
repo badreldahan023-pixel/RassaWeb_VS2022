@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "تسجيل الدخول";
+}
+
+<div class="row justify-content-center my-4">
+    <div class="col-md-6 col-lg-5">
+        <div class="card-rassa p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="bg-rassa-soft rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:68px;height:68px;">
+                    <i class="bi bi-person-lock fs-2 text-rassa"></i>
+                </div>
+                <h3 class="fw-bold text-rassa">تسجيل الدخول إلى رِصّة</h3>
+                <p class="text-muted small">ادخل لحساب نشاطك التجاري أو لوحة إدارة المخزن</p>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger small">@ViewBag.Error</div>
+            }
+
+            <form asp-action="Login" method="post" id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">البريد الإلكتروني أو رقم الهاتف</label>
+                    <input type="text" name="emailOrPhone" id="emailOrPhone" class="form-control form-control-lg" placeholder="مثال: cafe@rassa.com" required />
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">كلمة المرور</label>
+                    <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="******" required />
+                </div>
+                <button type="submit" class="btn btn-rassa btn-lg w-100 mb-3">
+                    <i class="bi bi-box-arrow-in-left me-1"></i> تسجيل الدخول
+                </button>
+            </form>
+
+            <div class="border-top pt-3 mt-3">
+                <p class="small fw-bold text-secondary mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> دخول سريع للتجربة والمناقشة بضغطة واحدة:</p>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="fillLogin('cafe@rassa.com','123456')">
+                        دخول كعميل (كافيه أرابيكا - cafe@rassa.com)
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="fillLogin('coffee.wh@rassa.com','123456')">
+                        دخول كمدير مخزن (مخزن القهوة - coffee.wh@rassa.com)
+                    </button>
+                    <button type="button" class="btn btn-outline-dark btn-sm" onclick="fillLogin('admin@rassa.com','123456')">
+                        دخول كمسؤول النظام (Admin - admin@rassa.com)
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center mt-4 small">
+                ليس لديك حساب؟ <a asp-action="Register" class="text-rassa fw-bold text-decoration-none">إنشاء حساب جديد في رِصّة</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fillLogin(email, pass) {
+        document.getElementById('emailOrPhone').value = email;
+        document.getElementById('password').value = pass;
+        document.getElementById('loginForm').submit();
+    }
+</script>

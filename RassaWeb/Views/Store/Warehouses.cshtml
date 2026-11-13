@@ -1,0 +1,66 @@
+@model List<RassaWeb.Models.Warehouse>
+@{
+    ViewData["Title"] = "المخازن القريبة منك";
+}
+
+<div class="card-rassa p-4 mb-4 bg-white">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-5">
+            <h2 class="fw-bold text-rassa mb-1"><i class="bi bi-geo-alt-fill text-danger me-2"></i>المخازن والموردون القريبون منك</h2>
+            <p class="text-muted small mb-0">اختر أقرب مخزن لنشاطك التجاري لتقليل وقت الوصول وضمان سرعة التوريد</p>
+        </div>
+        <div class="col-lg-7">
+            <form method="get" asp-action="Warehouses" class="row g-2">
+                <div class="col-md-5">
+                    <input type="text" name="q" value="@ViewBag.CurrentQuery" class="form-control" placeholder="ابحث باسم المخزن أو التخصص..." />
+                </div>
+                <div class="col-md-4">
+                    <select name="zone" class="form-select">
+                        <option value="">كل المناطق الجغرافية</option>
+                        <option value="مدينة نصر">القاهرة - مدينة نصر</option>
+                        <option value="المعادي">القاهرة - المعادي</option>
+                        <option value="مصر الجديدة">القاهرة - مصر الجديدة</option>
+                        <option value="التجمع الخامس">القاهرة - التجمع الخامس</option>
+                        <option value="الدقي">الجيزة - الدقي والمهندسين</option>
+                        <option value="أكتوبر">الجيزة - 6 أكتوبر</option>
+                        <option value="أسيوط">أسيوط</option>
+                        <option value="الإسكندرية">الإسكندرية</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-rassa"><i class="bi bi-search me-1"></i> بحث</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    @foreach (var wh in Model)
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card-rassa p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge @(wh.DeliveryStatus == "متاح الآن" ? "bg-success" : "bg-warning text-dark") px-3 py-2">
+                            <i class="bi bi-truck me-1"></i> @wh.DeliveryStatus
+                        </span>
+                        <span class="badge bg-rassa-soft fs-6">
+                            <i class="bi bi-pin-map-fill text-danger me-1"></i> @wh.DistanceKm كم
+                        </span>
+                    </div>
+                    <h4 class="fw-bold text-rassa mb-2">@wh.WarehouseName</h4>
+                    <p class="text-secondary mb-3">@wh.Specialty</p>
+                    <div class="p-3 rounded-3 bg-light small mb-3">
+                        <div class="mb-1"><i class="bi bi-geo-alt text-rassa me-1"></i> <strong>المنطقة:</strong> @wh.LocationZone</div>
+                        <div class="mb-1"><i class="bi bi-person-badge text-rassa me-1"></i> <strong>المسؤول:</strong> @wh.ManagerName</div>
+                        <div><i class="bi bi-box-seam text-rassa me-1"></i> <strong>الأصناف المتوفرة:</strong> @wh.ProductsCount منتج جملة</div>
+                    </div>
+                </div>
+                <a asp-action="Products" asp-route-warehouseId="@wh.WarehouseID" class="btn btn-rassa w-100 py-2">
+                    <i class="bi bi-grid me-1"></i> استعراض منتجات المخزن (@wh.ProductsCount)
+                </a>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,87 @@
+@model RassaWeb.Models.Product
+@{
+    ViewData["Title"] = Model.ProductName;
+    var related = ViewBag.RelatedProducts as List<RassaWeb.Models.Product> ?? new List<RassaWeb.Models.Product>();
+}
+
+<div class="card-rassa p-4 p-md-5 mb-5">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-5 text-center">
+            <div class="bg-rassa-soft rounded-4 p-5 border">
+                <i class="bi @Model.CategoryIcon display-1 text-rassa d-block mb-3"></i>
+                <span class="badge bg-rassa px-3 py-2 fs-6">@Model.CategoryName</span>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="d-flex flex-wrap gap-2 mb-2">
+                <span class="badge bg-success px-3 py-2"><i class="bi bi-check-circle me-1"></i>الكمية المتاحة: @Model.AvailableQuantity وحدة</span>
+                <span class="badge bg-warning text-dark px-3 py-2"><i class="bi bi-pin-map-fill me-1"></i>يبعد @Model.WarehouseDistanceKm كم</span>
+            </div>
+            <h2 class="fw-bold text-rassa mb-2">@Model.ProductName</h2>
+            <p class="text-secondary fs-5 mb-4">@Model.Description</p>
+
+            <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                    <div class="p-3 rounded-3 bg-light border">
+                        <span class="text-muted small d-block">حجم العبوة / الوحدة</span>
+                        <strong class="fs-5 text-dark">@Model.SizeUnit</strong>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="p-3 rounded-3 bg-light border">
+                        <span class="text-muted small d-block">موعد الاستلام المتوقع</span>
+                        <strong class="fs-5 text-success">@Model.ExpectedDeliveryTime</strong>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="p-3 rounded-3 bg-light border">
+                        <span class="text-muted small d-block">المخزن المورّد</span>
+                        <strong class="fs-6 text-rassa">@Model.WarehouseName (@Model.WarehouseZone)</strong>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="p-3 rounded-3 bg-rassa-soft border border-success">
+                        <span class="text-muted small d-block">السعر</span>
+                        <strong class="fs-3 text-rassa">@Model.Price.ToString("N2") ج.م</strong>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="AddToCart" method="post" class="row g-3 align-items-end">
+                <input type="hidden" name="productId" value="@Model.ProductID" />
+                <div class="col-sm-4">
+                    <label class="form-label fw-bold">الكمية المطلوبة</label>
+                    <input type="number" name="quantity" value="5" min="1" max="@Model.AvailableQuantity" class="form-control form-control-lg text-center fw-bold" />
+                </div>
+                <div class="col-sm-8">
+                    <button type="submit" class="btn btn-rassa btn-lg w-100 py-3">
+                        <i class="bi bi-cart-plus-fill me-2"></i> أضف إلى سلة المشتريات
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (related.Any())
+{
+    <h4 class="fw-bold text-rassa mb-3">منتجات مشابهة في نفس القسم للمقارنة</h4>
+    <div class="row g-3">
+        @foreach (var rp in related)
+        {
+            <div class="col-md-3">
+                <div class="card-rassa p-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <span class="badge bg-rassa-soft mb-2">@rp.SizeUnit</span>
+                        <h6 class="fw-bold">@rp.ProductName</h6>
+                        <p class="small text-muted mb-2">@rp.WarehouseName</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                        <span class="fw-bold text-rassa">@rp.Price.ToString("N2") ج.م</span>
+                        <a asp-action="Details" asp-route-id="@rp.ProductID" class="btn btn-outline-rassa btn-sm">عرض</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,198 @@
+@{
+    ViewData["Title"] = "لوحة تحكم المسؤول Admin Dashboard";
+    var stats = ViewBag.Stats as RassaWeb.Models.DashboardStats ?? new RassaWeb.Models.DashboardStats();
+    var users = ViewBag.Users as List<RassaWeb.Models.User> ?? new List<RassaWeb.Models.User>();
+    var warehouses = ViewBag.Warehouses as List<RassaWeb.Models.Warehouse> ?? new List<RassaWeb.Models.Warehouse>();
+    var categories = ViewBag.Categories as List<RassaWeb.Models.Category> ?? new List<RassaWeb.Models.Category>();
+    var products = ViewBag.Products as List<RassaWeb.Models.Product> ?? new List<RassaWeb.Models.Product>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-rassa mb-1"><i class="bi bi-speedometer2 me-2"></i>لوحة تحكم المسؤول (Admin Dashboard)</h2>
+        <p class="text-muted small mb-0">إدارة شاملة للمخازن، المنتجات، الأقسام، المستخدمين، ومراقبة سلسلة كتل البلوك تشين</p>
+    </div>
+    <span class="badge bg-success px-3 py-2 fs-6"><i class="bi bi-check2-all me-1"></i>حالة النظام وقاعدة البيانات: متصلة وتعمل بكفاءة</span>
+</div>
+
+<!-- كروت الإحصائيات KPIs -->
+<div class="row g-3 mb-4 text-center">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card-rassa p-3 border-top border-4 border-success">
+            <h3 class="fw-bold text-rassa mb-1">@stats.TotalWarehouses</h3>
+            <span class="small text-muted">المخازن المعتمدة</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card-rassa p-3 border-top border-4 border-primary">
+            <h3 class="fw-bold text-primary mb-1">@stats.TotalProducts</h3>
+            <span class="small text-muted">إجمالي المنتجات</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card-rassa p-3 border-top border-4 border-warning">
+            <h3 class="fw-bold text-dark mb-1">@stats.TotalClients</h3>
+            <span class="small text-muted">مطاعم وكافيهات</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card-rassa p-3 border-top border-4 border-info">
+            <h3 class="fw-bold text-info mb-1">@stats.TotalOrders</h3>
+            <span class="small text-muted">إجمالي الطلبات</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card-rassa p-3 border-top border-4 border-secondary">
+            <h3 class="fw-bold text-success mb-1">@stats.TotalBlockchainBlocks</h3>
+            <span class="small text-muted">كتل Blockchain</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card-rassa p-3 border-top border-4 border-danger">
+            <h5 class="fw-bold text-rassa mb-1">@stats.TotalSales.ToString("N0") ج.م</h5>
+            <span class="small text-muted">حجم التوريدات</span>
+        </div>
+    </div>
+</div>
+
+<!-- نماذج إضافة مخزن جديد وإضافة قسم جديد -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="card-rassa p-4 h-100">
+            <h5 class="fw-bold text-rassa mb-3"><i class="bi bi-shop-window me-2"></i>إضافة مخزن / مورد جديد للمنصة</h5>
+            <form asp-action="AddWarehouse" method="post" class="row g-2">
+                <div class="col-md-6">
+                    <input type="text" name="WarehouseName" class="form-control" placeholder="اسم المخزن (مثال: مخزن التوريدات الحديثة)" required />
+                </div>
+                <div class="col-md-6">
+                    <input type="text" name="Specialty" class="form-control" placeholder="التخصص (مثال: مستلزمات كافيهات وتغليف)" required />
+                </div>
+                <div class="col-md-5">
+                    <input type="text" name="LocationZone" class="form-control" placeholder="المنطقة (مثال: القاهرة - مدينة نصر)" required />
+                </div>
+                <div class="col-md-3">
+                    <input type="number" step="0.1" name="DistanceKm" class="form-control" placeholder="المسافة كم (1.5)" value="1.8" required />
+                </div>
+                <div class="col-md-4">
+                    <select name="DeliveryStatus" class="form-select">
+                        <option value="متاح الآن">متاح الآن</option>
+                        <option value="توصيل اليوم">توصيل اليوم</option>
+                    </select>
+                </div>
+                <div class="col-12 mt-2">
+                    <button type="submit" class="btn btn-rassa w-100"><i class="bi bi-plus-circle me-1"></i> إضافة المخزن إلى قاعدة البيانات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card-rassa p-4 h-100">
+            <h5 class="fw-bold text-rassa mb-3"><i class="bi bi-tags-fill me-2"></i>إضافة قسم منتجات جديد</h5>
+            <form asp-action="AddCategory" method="post" class="row g-2">
+                <div class="col-12">
+                    <input type="text" name="categoryName" class="form-control" placeholder="اسم القسم (مثال: معدات وماكينات القهوة)" required />
+                </div>
+                <div class="col-12">
+                    <input type="text" name="description" class="form-control" placeholder="وصف مختصر للقسم..." required />
+                </div>
+                <div class="col-12">
+                    <input type="hidden" name="iconClass" value="bi-box-seam-fill" />
+                    <button type="submit" class="btn btn-outline-rassa w-100"><i class="bi bi-plus-lg me-1"></i> حفظ القسم الجديد</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- جدول المستخدمين المسجلين -->
+<div class="card-rassa p-4 mb-4">
+    <h5 class="fw-bold text-rassa mb-3"><i class="bi bi-people-fill me-2"></i>إدارة المستخدمين والصلاحيات (@users.Count مستخدم)</h5>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>الاسم / النشاط</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>الهاتف</th>
+                    <th>نوع النشاط</th>
+                    <th>المنطقة</th>
+                    <th>الصلاحية</th>
+                    <th>الحالة</th>
+                    <th>إجراء</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in users)
+                {
+                    <tr>
+                        <td>@u.UserID</td>
+                        <td class="fw-bold">@u.FullName</td>
+                        <td>@u.Email</td>
+                        <td>@u.Phone</td>
+                        <td><span class="badge bg-rassa-soft">@u.BusinessType</span></td>
+                        <td>@u.LocationZone</td>
+                        <td><span class="badge bg-dark">@u.Role</span></td>
+                        <td>
+                            @if (u.IsActive)
+                            {
+                                <span class="badge bg-success">نشط</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">موقوف</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="ToggleUser" method="post">
+                                <input type="hidden" name="userId" value="@u.UserID" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">تفعيل/إيقاف</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- جدول المخازن الـ 10 -->
+<div class="card-rassa p-4">
+    <h5 class="fw-bold text-rassa mb-3"><i class="bi bi-buildings-fill me-2"></i>قائمة المخازن المعتمدة على المنصة (@warehouses.Count مخزن)</h5>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>اسم المخزن</th>
+                    <th>التخصص</th>
+                    <th>المنطقة</th>
+                    <th>المسافة</th>
+                    <th>حالة التوصيل</th>
+                    <th>عدد الأصناف</th>
+                    <th>إدارة المخزن</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var w in warehouses)
+                {
+                    <tr>
+                        <td>@w.WarehouseID</td>
+                        <td class="fw-bold text-rassa">@w.WarehouseName</td>
+                        <td>@w.Specialty</td>
+                        <td>@w.LocationZone</td>
+                        <td>@w.DistanceKm كم</td>
+                        <td><span class="badge bg-success">@w.DeliveryStatus</span></td>
+                        <td><span class="badge bg-rassa-soft">@w.ProductsCount منتج</span></td>
+                        <td>
+                            <a asp-controller="Warehouse" asp-action="Index" asp-route-warehouseId="@w.WarehouseID" class="btn btn-outline-rassa btn-sm">
+                                فتح لوحة المخزن
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,252 @@
+@{
+    ViewData["Title"] = "لوحة تحكم أصحاب المخازن والتوريد للمطاعم";
+    var allWarehouses = ViewBag.AllWarehouses as List<RassaWeb.Models.Warehouse> ?? new List<RassaWeb.Models.Warehouse>();
+    var currentWh = ViewBag.CurrentWarehouse as RassaWeb.Models.Warehouse;
+    var categories = ViewBag.Categories as List<RassaWeb.Models.Category> ?? new List<RassaWeb.Models.Category>();
+    var products = ViewBag.WarehouseProducts as List<RassaWeb.Models.Product> ?? new List<RassaWeb.Models.Product>();
+    var orders = ViewBag.WarehouseOrders as List<RassaWeb.Models.Order> ?? new List<RassaWeb.Models.Order>();
+    var restaurants = ViewBag.RestaurantClients as List<RassaWeb.Models.User> ?? new List<RassaWeb.Models.User>();
+}
+
+<div class="card-rassa p-4 mb-4 bg-rassa text-white">
+    <div class="row align-items-center g-3">
+        <div class="col-lg-7">
+            <span class="badge bg-warning text-dark fw-bold mb-2">لوحة أصحاب المخازن (إجمالي @allWarehouses.Count مخزن معتمد)</span>
+            <h2 class="fw-bold mb-1">مخزن: @(currentWh?.WarehouseName)</h2>
+            <p class="mb-0 opacity-85">
+                <i class="bi bi-geo-alt me-1"></i>@currentWh?.LocationZone |
+                <strong>التخصص:</strong> @currentWh?.Specialty |
+                <strong>المنتجات داخل المخزن:</strong> @products.Count منتج
+            </p>
+        </div>
+        <div class="col-lg-5">
+            <label class="small text-warning fw-bold mb-1">اختر أي مخزن من الـ @allWarehouses.Count مخزناً لاستعراض وإدارة الـ 15 منتجاً بداخله:</label>
+            <form method="get" asp-action="Index" class="d-flex gap-2">
+                <select name="warehouseId" class="form-select fw-bold" onchange="this.form.submit()">
+                    @foreach (var w in allWarehouses)
+                    {
+                        if (currentWh != null && w.WarehouseID == currentWh.WarehouseID)
+                        {
+                            <option value="@w.WarehouseID" selected>مخزن #@w.WarehouseID: @w.WarehouseName (@w.ProductsCount منتج)</option>
+                        }
+                        else
+                        {
+                            <option value="@w.WarehouseID">مخزن #@w.WarehouseID: @w.WarehouseName (@w.ProductsCount منتج)</option>
+                        }
+                    }
+                </select>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- قسم التوريد المباشر: أصحاب المخازن يسجلون طلبات توريد لأي صاحب مطعم أو كافيه -->
+<div class="card-rassa p-4 mb-4 border-top border-4 border-warning">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-5">
+            <h4 class="fw-bold text-rassa mb-2"><i class="bi bi-handshake me-2 text-warning"></i>تسجيل توريد مباشر لأصحاب المطاعم والكافيهات</h4>
+            <p class="text-muted small mb-2">
+                تتيح منصة <strong>رِصّة</strong> لأصحاب المخازن التسجيل والتوريد المباشر لأي صاحب مطعم أو كافيه أو مخبز مسجل على المنصة مع توثيق العملية فوراً في سجل <strong>Blockchain</strong>.
+            </p>
+            <div class="p-2 rounded bg-rassa-soft small">
+                <strong>عدد المطاعم والكافيهات المتاحة للتوريد:</strong> @restaurants.Count نشاط تجاري مسجل.
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <form asp-action="SupplyToRestaurant" method="post" class="row g-2 p-3 rounded-3 bg-light border">
+                <input type="hidden" name="warehouseId" value="@currentWh?.WarehouseID" />
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold">اختر صاحب المطعم / الكافيه / المخبز</label>
+                    <select name="clientUserId" class="form-select">
+                        @foreach (var rest in restaurants)
+                        {
+                            <option value="@rest.UserID">@rest.FullName (@rest.BusinessType - @rest.LocationZone)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold">اختر المنتج من مخزنك (@products.Count منتج)</label>
+                    <select name="productId" class="form-select">
+                        @foreach (var p in products)
+                        {
+                            <option value="@p.ProductID">@p.ProductName (@p.SizeUnit - @p.Price ج.م)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">الكمية</label>
+                    <input type="number" name="quantity" value="5" min="1" class="form-control text-center fw-bold" required />
+                </div>
+                <div class="col-12 mt-2">
+                    <button type="submit" class="btn btn-rassa w-100">
+                        <i class="bi bi-send-check-fill me-1"></i> تسجيل وإرسال التوريد للمطعم وتوثيقه في Blockchain
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- إدارة الطلبات الواردة للمخزن -->
+    <div class="col-lg-7">
+        <div class="card-rassa p-4 h-100">
+            <h4 class="fw-bold text-rassa mb-3"><i class="bi bi-inbox-fill me-2"></i>طلبات التوريد الخاصة بالمخزن (@orders.Count)</h4>
+            @if (!orders.Any())
+            {
+                <p class="text-muted">لا توجد طلبات مسجلة لهذا المخزن حالياً. يمكنك استخدام نموذج التوريد المباشر بالأعلى لتسجيل طلب لأي مطعم فوراً!</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>المطعم / الكافيه</th>
+                                <th>الإجمالي</th>
+                                <th>الحالة</th>
+                                <th>تحديث المرحلة (+ Blockchain)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in orders)
+                            {
+                                <tr>
+                                    <td class="fw-bold">
+                                        <a asp-controller="Store" asp-action="Track" asp-route-id="@o.OrderID" class="text-rassa">#@o.OrderNumber</a>
+                                    </td>
+                                    <td>@o.ClientName <span class="badge bg-rassa-soft">@o.ClientBusinessType</span></td>
+                                    <td class="fw-bold">@o.TotalAmount.ToString("N2") ج.م</td>
+                                    <td><span class="badge bg-success">@o.OrderStatus</span></td>
+                                    <td>
+                                        <form asp-action="UpdateOrderStatus" method="post" class="d-flex gap-1">
+                                            <input type="hidden" name="orderId" value="@o.OrderID" />
+                                            <input type="hidden" name="warehouseId" value="@currentWh?.WarehouseID" />
+                                            <select name="newStatus" class="form-select form-select-sm">
+                                                <option value="المخزن يجهّز الطلب">المخزن يجهّز الطلب</option>
+                                                <option value="جاهز للاستلام">جاهز للاستلام</option>
+                                                <option value="في الطريق">في الطريق (شحن)</option>
+                                                <option value="تم التسليم">تم التسليم</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-rassa btn-sm">توثيق</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- إضافة منتج جديد للمخزن -->
+    <div class="col-lg-5">
+        <div class="card-rassa p-4 h-100">
+            <h4 class="fw-bold text-rassa mb-3"><i class="bi bi-plus-circle-fill me-2"></i>إضافة منتج إضافي للمخزن</h4>
+            <form asp-action="AddProduct" method="post">
+                <input type="hidden" name="WarehouseID" value="@currentWh?.WarehouseID" />
+                <div class="mb-2">
+                    <label class="form-label small fw-bold">اسم المنتج</label>
+                    <input type="text" name="ProductName" class="form-control" placeholder="مثال: بن كولومبي محمص" required />
+                </div>
+                <div class="row g-2 mb-2">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">القسم</label>
+                        <select name="CategoryID" class="form-select">
+                            @foreach (var c in categories)
+                            {
+                                <option value="@c.CategoryID">@c.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">الحجم / العبوة</label>
+                        <input type="text" name="SizeUnit" class="form-control" placeholder="مثال: 1 كجم / كرتونة" required />
+                    </div>
+                </div>
+                <div class="row g-2 mb-2">
+                    <div class="col-4">
+                        <label class="form-label small fw-bold">السعر (ج.م)</label>
+                        <input type="number" step="0.01" name="Price" class="form-control" value="350" required />
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label small fw-bold">الكمية المتاحة</label>
+                        <input type="number" name="initialQty" class="form-control" value="40" required />
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label small fw-bold">حد التنبيه</label>
+                        <input type="number" name="minThreshold" class="form-control" value="10" required />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">وصف المنتج</label>
+                    <input type="text" name="Description" class="form-control" placeholder="وصف مختصر للمواصفات والجودة..." />
+                </div>
+                <button type="submit" class="btn btn-rassa w-100"><i class="bi bi-check-lg me-1"></i> حفظ المنتج وإضافته للمخزون</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- جدول الـ 15 منتجاً داخل المخزن -->
+<div class="card-rassa p-4">
+    <h4 class="fw-bold text-rassa mb-3"><i class="bi bi-boxes me-2"></i>منتجات المخزن الحالي (@products.Count منتج متاح للتوريد)</h4>
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>اسم المنتج</th>
+                    <th>القسم</th>
+                    <th>الحجم</th>
+                    <th>حالة المخزون</th>
+                    <th>تحديث السعر والكمية المتاحة</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in products)
+                {
+                    <tr>
+                        <td>@p.ProductID</td>
+                        <td class="fw-bold text-rassa">@p.ProductName</td>
+                        <td>@p.CategoryName</td>
+                        <td><span class="badge bg-rassa-soft">@p.SizeUnit</span></td>
+                        <td>
+                            @if (p.AvailableQuantity <= p.MinThreshold)
+                            {
+                                <span class="badge bg-danger">تنبيه نقص مخزون (@p.AvailableQuantity)</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">رصيد آمن (@p.AvailableQuantity وحدة)</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="UpdateStock" method="post" class="row g-2 align-items-center">
+                                <input type="hidden" name="productId" value="@p.ProductID" />
+                                <input type="hidden" name="warehouseId" value="@currentWh?.WarehouseID" />
+                                <div class="col-auto">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">السعر</span>
+                                        <input type="number" step="0.01" name="price" value="@p.Price" class="form-control" style="width:95px;" />
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">الكمية</span>
+                                        <input type="number" name="availableQty" value="@p.AvailableQuantity" class="form-control" style="width:80px;" />
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-outline-rassa btn-sm">حفظ التعديل</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

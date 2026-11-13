@@ -1,0 +1,48 @@
+@model List<RassaWeb.Models.Order>
+@{
+    ViewData["Title"] = "قائمة الطلبات";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-rassa mb-1"><i class="bi bi-clipboard2-check me-2"></i>سجل طلبات التوريد وتتبع Blockchain</h2>
+        <p class="text-muted small mb-0">اضغط على أي طلب لاستعراض شريط التتبع اللحظي وسلسلة الكتل المشفرة (SHA-256)</p>
+    </div>
+    <a asp-action="Products" class="btn btn-rassa"><i class="bi bi-plus-lg me-1"></i>إنشاء طلب جديد</a>
+</div>
+
+<div class="card-rassa p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>رقم الطلب</th>
+                    <th>العميل (النشاط)</th>
+                    <th>المخزن المورّد</th>
+                    <th>تاريخ الطلب</th>
+                    <th>الإجمالي</th>
+                    <th>الحالة الحالية</th>
+                    <th>التتبع والتوثيق</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model)
+                {
+                    <tr>
+                        <td class="fw-bold fs-5 text-rassa">#@o.OrderNumber</td>
+                        <td>@o.ClientName <span class="badge bg-rassa-soft ms-1">@o.ClientBusinessType</span></td>
+                        <td>@o.WarehouseName</td>
+                        <td>@o.OrderDate.ToString("yyyy-MM-dd hh:mm tt")</td>
+                        <td class="fw-bold">@o.TotalAmount.ToString("N2") ج.م</td>
+                        <td><span class="badge bg-success px-3 py-2">@o.OrderStatus</span></td>
+                        <td>
+                            <a asp-action="Track" asp-route-id="@o.OrderID" class="btn btn-rassa btn-sm px-3">
+                                <i class="bi bi-shield-check me-1"></i> تتبع الطلب وسجل الكتل
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

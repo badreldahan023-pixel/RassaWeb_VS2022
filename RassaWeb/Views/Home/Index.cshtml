@@ -1,0 +1,221 @@
+@model RassaWeb.Models.HomeViewModel
+@{
+    ViewData["Title"] = "الرئيسية";
+}
+
+<!-- Hero Section -->
+<div class="hero-rassa mb-5">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-3">
+                <i class="bi bi-stars me-1"></i> منصة التوريد الذكية للمطاعم والكافيهات والمخابز
+            </span>
+            <h1 class="display-4 fw-bold mb-3">كل احتياجات مشروعك... في رِصّة واحدة.</h1>
+            <p class="fs-5 opacity-90 mb-4">
+                رِصّة منصة إلكترونية تهدف إلى تسهيل عملية التوريد والشراء للمطاعم والكافيهات، من خلال ربط أصحاب الأنشطة التجارية بالموردين والمخازن القريبة في مكان واحد مع توثيق كامل عبر تقنية Blockchain.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a asp-controller="Store" asp-action="Warehouses" class="btn btn-warning btn-lg fw-bold px-4">
+                    <i class="bi bi-geo-alt-fill me-1"></i> اكتشف المخازن القريبة (@Model.Stats.TotalWarehouses)
+                </a>
+                <a asp-controller="Store" asp-action="Products" class="btn btn-light btn-lg text-rassa fw-bold px-4">
+                    <i class="bi bi-grid-fill me-1"></i> تصفح المنتجات (@Model.Stats.TotalProducts)
+                </a>
+                <a asp-controller="Home" asp-action="About" class="btn btn-outline-light btn-lg px-4">
+                    <i class="bi bi-info-circle me-1"></i> من نحن
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="row g-3 text-center">
+                <div class="col-6">
+                    <div class="bg-white bg-opacity-10 p-3 rounded-4 border border-light border-opacity-25">
+                        <h2 class="fw-bold text-warning mb-1">@Model.Stats.TotalWarehouses</h2>
+                        <span class="small">مخزن ومورد معتمد</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bg-white bg-opacity-10 p-3 rounded-4 border border-light border-opacity-25">
+                        <h2 class="fw-bold text-warning mb-1">@Model.Stats.TotalProducts</h2>
+                        <span class="small">منتج وتوريد جملة</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bg-white bg-opacity-10 p-3 rounded-4 border border-light border-opacity-25">
+                        <h2 class="fw-bold text-warning mb-1">@Model.Stats.TotalCategories</h2>
+                        <span class="small">قطاعات توريد رئيسية</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bg-white bg-opacity-10 p-3 rounded-4 border border-light border-opacity-25">
+                        <h2 class="fw-bold text-warning mb-1">@Model.Stats.TotalBlockchainBlocks</h2>
+                        <span class="small">كتلة Blockchain موثقة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- كيف تعمل رِصّة؟ -->
+<div class="mb-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-rassa">كيف تعمل منصة رِصّة؟</h2>
+        <p class="text-muted">من الفوضى والمكالمات العشوائية إلى سلسلة توريد رقمية منظمة في 4 خطوات</p>
+    </div>
+    <div class="row g-4 text-center">
+        <div class="col-md-3">
+            <div class="card-rassa p-4 h-100">
+                <div class="bg-rassa-soft rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+                    <i class="bi bi-search fs-3"></i>
+                </div>
+                <h5 class="fw-bold">1. ابحث عن أقرب مخزن</h5>
+                <p class="small text-muted mb-0">حدد منطقتك واستعرض الموردين القريبين منك لتقليل وقت الوصول.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-rassa p-4 h-100">
+                <div class="bg-rassa-soft rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+                    <i class="bi bi-sliders fs-3"></i>
+                </div>
+                <h5 class="fw-bold">2. قارن المنتجات والأسعار</h5>
+                <p class="small text-muted mb-0">تعرف على الأحجام والكميات المتاحة لحظياً في كل مخزن بوضوح تام.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-rassa p-4 h-100">
+                <div class="bg-rassa-soft rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+                    <i class="bi bi-cart-check fs-3"></i>
+                </div>
+                <h5 class="fw-bold">3. اطلب بضغطة واحدة</h5>
+                <p class="small text-muted mb-0">أضف احتياجات مطعمك أو كافيهك إلى السلة وأصدر أمر التوريد فوراً.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-rassa p-4 h-100">
+                <div class="bg-rassa-soft rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+                    <i class="bi bi-link-45deg fs-3"></i>
+                </div>
+                <h5 class="fw-bold">4. تتبع لحظي + Blockchain</h5>
+                <p class="small text-muted mb-0">تابع مراحل تجهيز وشحن طلبك مع سجل كتل مشفر يحفظ حقوق الطرفين.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- أقسام التوريد -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-rassa mb-1">أقسام وتصنيفات التوريد</h3>
+            <p class="text-muted small mb-0">اختر القسم لاستعراض كافة المنتجات والموردين المتاحين</p>
+        </div>
+        <a asp-controller="Store" asp-action="Products" class="btn btn-outline-rassa btn-sm">عرض كل المنتجات</a>
+    </div>
+    <div class="row g-3">
+        @foreach (var cat in Model.Categories)
+        {
+            <div class="col-md-4 col-lg-2">
+                <a asp-controller="Store" asp-action="Products" asp-route-categoryId="@cat.CategoryID" class="text-decoration-none text-dark">
+                    <div class="card-rassa p-3 text-center h-100">
+                        <i class="bi @cat.IconClass fs-1 text-rassa mb-2 d-block"></i>
+                        <h6 class="fw-bold mb-1">@cat.CategoryName</h6>
+                        <span class="badge bg-rassa-soft">@cat.ProductCount منتج</span>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- أبرز المخازن القريبة -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-rassa mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i>المخازن القريبة منك</h3>
+            <p class="text-muted small mb-0">مخازن جاهزة للتوريد السريع للمطاعم والكافيهات والمخابز</p>
+        </div>
+        <a asp-controller="Store" asp-action="Warehouses" class="btn btn-rassa btn-sm">عرض جميع المخازن (@Model.Stats.TotalWarehouses)</a>
+    </div>
+    <div class="row g-4">
+        @foreach (var wh in Model.FeaturedWarehouses)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card-rassa p-4 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-success">@wh.DeliveryStatus</span>
+                            <span class="badge bg-light text-dark border"><i class="bi bi-pin-map-fill text-danger me-1"></i>@wh.DistanceKm كم</span>
+                        </div>
+                        <h5 class="fw-bold text-rassa mb-1">@wh.WarehouseName</h5>
+                        <p class="text-muted small mb-2">@wh.Specialty</p>
+                        <div class="small text-secondary mb-3">
+                            <i class="bi bi-geo me-1"></i> @wh.LocationZone | <i class="bi bi-box-seam ms-1 me-1"></i> @wh.ProductsCount أصناف متاحة
+                        </div>
+                    </div>
+                    <a asp-controller="Store" asp-action="Products" asp-route-warehouseId="@wh.WarehouseID" class="btn btn-outline-rassa w-100">
+                        استعراض منتجات المخزن <i class="bi bi-arrow-left ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- أحدث المنتجات -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-rassa mb-1">أحدث منتجات التوريد بالجملة</h3>
+            <p class="text-muted small mb-0">أسعار تنافسية وكميات محدثة لحظياً من المخازن مباشرة</p>
+        </div>
+        <a asp-controller="Store" asp-action="Products" class="btn btn-rassa btn-sm">كتالوج المنتجات الكامل</a>
+    </div>
+    <div class="row g-4">
+        @foreach (var prod in Model.FeaturedProducts)
+        {
+            <div class="col-md-6 col-lg-3">
+                <div class="card-rassa p-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-rassa-soft">@prod.SizeUnit</span>
+                            <span class="small text-success fw-bold"><i class="bi bi-check-circle me-1"></i>متاح: @prod.AvailableQuantity</span>
+                        </div>
+                        <h6 class="fw-bold mb-1">@prod.ProductName</h6>
+                        <p class="small text-muted mb-2"><i class="bi bi-shop me-1"></i>@prod.WarehouseName (@prod.WarehouseDistanceKm كم)</p>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mb-2">
+                            <span class="text-muted small">السعر:</span>
+                            <span class="fs-5 fw-bold text-rassa">@prod.Price.ToString("N2") ج.م</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Store" asp-action="Details" asp-route-id="@prod.ProductID" class="btn btn-outline-rassa btn-sm w-50">التفاصيل</a>
+                            <form asp-controller="Store" asp-action="AddToCart" method="post" class="w-50">
+                                <input type="hidden" name="productId" value="@prod.ProductID" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-rassa btn-sm w-100"><i class="bi bi-cart-plus"></i> أضف</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- قسم مختصر من نحن في الرئيسية -->
+<div class="card-rassa p-4 bg-white border-start border-5 border-success">
+    <div class="row align-items-center">
+        <div class="col-lg-9">
+            <h4 class="fw-bold text-rassa mb-2">من نحن – رِصّة | رؤيتنا ورسالتنا</h4>
+            <p class="text-secondary mb-2">
+                تهدف منصة <strong>رِصّة</strong> إلى توفير وسيلة ذكية وموثوقة تربط بين الموردين والعملاء، وتساعد على توفير الوقت والجهد وتحسين تجربة الشراء للمطاعم والكافيهات والمخابز.
+            </p>
+            <span class="fw-bold text-rassa">رِصّة.. كل احتياجاتك في مكان واحد.</span>
+        </div>
+        <div class="col-lg-3 text-lg-end mt-3 mt-lg-0">
+            <a asp-controller="Home" asp-action="About" class="btn btn-rassa px-4">اقرأ المزيد عنا <i class="bi bi-arrow-left ms-1"></i></a>
+        </div>
+    </div>
+</div>

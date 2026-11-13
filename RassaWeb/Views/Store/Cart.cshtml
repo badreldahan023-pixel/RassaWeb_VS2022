@@ -1,0 +1,95 @@
+@model List<RassaWeb.Models.CartItem>
+@{
+    ViewData["Title"] = "سلة المشتريات";
+    decimal grandTotal = Model.Sum(i => i.SubTotal);
+}
+
+<h2 class="fw-bold text-rassa mb-4"><i class="bi bi-cart3 me-2"></i>سلة المشتريات وإصدار أمر التوريد</h2>
+
+@if (!Model.Any())
+{
+    <div class="card-rassa p-5 text-center">
+        <i class="bi bi-cart-x display-1 text-muted mb-3"></i>
+        <h4 class="fw-bold">سلة المشتريات فارغة حالياً</h4>
+        <p class="text-muted mb-4">استعرض المخازن القريبة والمنتجات وأضف احتياجات مطعمك أو كافيهك بضغطة واحدة.</p>
+        <a asp-action="Products" class="btn btn-rassa btn-lg px-4">تصفح كتالوج المنتجات</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card-rassa p-4">
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>المنتج</th>
+                                <th>المخزن</th>
+                                <th>الحجم</th>
+                                <th>سعر الوحدة</th>
+                                <th>الكمية</th>
+                                <th>الإجمالي الفرعي</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-rassa">@item.ProductName</td>
+                                    <td class="small">@item.WarehouseName</td>
+                                    <td><span class="badge bg-rassa-soft">@item.SizeUnit</span></td>
+                                    <td>@item.UnitPrice.ToString("N2") ج.م</td>
+                                    <td style="width:140px;">
+                                        <form asp-action="UpdateCartQuantity" method="post" class="d-flex gap-1">
+                                            <input type="hidden" name="productId" value="@item.ProductID" />
+                                            <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control form-control-sm text-center" />
+                                            <button type="submit" class="btn btn-outline-rassa btn-sm">تحديث</button>
+                                        </form>
+                                    </td>
+                                    <td class="fw-bold">@item.SubTotal.ToString("N2") ج.م</td>
+                                    <td>
+                                        <form asp-action="RemoveFromCart" method="post">
+                                            <input type="hidden" name="productId" value="@item.ProductID" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card-rassa p-4 border-top border-4 border-success">
+                <h4 class="fw-bold text-rassa mb-3">ملخص أمر التوريد</h4>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>عدد الأصناف:</span>
+                    <strong>@Model.Count أصناف (@Model.Sum(i => i.Quantity) وحدة)</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>خدمة التوثيق الرقمي Blockchain:</span>
+                    <span class="badge bg-success">مجاناً ومفعل</span>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="fs-5 fw-bold">الإجمالي الكلي:</span>
+                    <span class="fs-3 fw-bold text-rassa">@grandTotal.ToString("N2") ج.م</span>
+                </div>
+
+                <form asp-action="Checkout" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">عنوان تسليم الطلب (المطعم / الكافيه / المخبز)</label>
+                        <input type="text" name="deliveryAddress" class="form-control" value="القاهرة - مدينة نصر - شارع عباس العقاد" required />
+                    </div>
+                    <button type="submit" class="btn btn-rassa btn-lg w-100 py-3">
+                        <i class="bi bi-send-check-fill me-1"></i> تأكيد الطلب وتوليد كتل Blockchain
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+}

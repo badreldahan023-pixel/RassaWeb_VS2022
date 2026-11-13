@@ -1,0 +1,68 @@
+@model RassaWeb.Models.User
+@{
+    ViewData["Title"] = "الملف الشخصي";
+    var myOrders = ViewBag.MyOrders as List<RassaWeb.Models.Order> ?? new List<RassaWeb.Models.Order>();
+}
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card-rassa p-4">
+            <div class="text-center mb-3">
+                <div class="bg-rassa-soft rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width:72px;height:72px;">
+                    <i class="bi bi-building-check fs-2 text-rassa"></i>
+                </div>
+                <h4 class="fw-bold text-rassa mb-1">@Model?.FullName</h4>
+                <span class="badge bg-success">@Model?.BusinessType</span>
+            </div>
+            <hr />
+            <p class="mb-2"><strong><i class="bi bi-envelope me-2"></i>البريد:</strong> @Model?.Email</p>
+            <p class="mb-2"><strong><i class="bi bi-telephone me-2"></i>الهاتف:</strong> @Model?.Phone</p>
+            <p class="mb-2"><strong><i class="bi bi-geo-alt me-2"></i>المنطقة:</strong> @Model?.LocationZone</p>
+            <p class="mb-0"><strong><i class="bi bi-shield-check me-2"></i>الصلاحية:</strong> @Model?.Role</p>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card-rassa p-4">
+            <h4 class="fw-bold text-rassa mb-3"><i class="bi bi-receipt me-2"></i>سجل طلبات التوريد الخاصة بك (@myOrders.Count)</h4>
+            @if (!myOrders.Any())
+            {
+                <p class="text-muted">لا توجد طلبات سابقة حتى الآن.</p>
+                <a asp-controller="Store" asp-action="Products" class="btn btn-rassa">تصفح المنتجات واطلب الآن</a>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>المخزن المورد</th>
+                                <th>التاريخ</th>
+                                <th>الإجمالي</th>
+                                <th>الحالة</th>
+                                <th>تتبع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ord in myOrders)
+                            {
+                                <tr>
+                                    <td class="fw-bold">#@ord.OrderNumber</td>
+                                    <td>@ord.WarehouseName</td>
+                                    <td>@ord.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td class="fw-bold text-rassa">@ord.TotalAmount.ToString("N2") ج.م</td>
+                                    <td><span class="badge bg-success">@ord.OrderStatus</span></td>
+                                    <td>
+                                        <a asp-controller="Store" asp-action="Track" asp-route-id="@ord.OrderID" class="btn btn-outline-rassa btn-sm">
+                                            تتبع و Blockchain
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

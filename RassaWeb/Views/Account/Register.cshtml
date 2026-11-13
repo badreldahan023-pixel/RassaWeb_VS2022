@@ -1,0 +1,159 @@
+@model RassaWeb.Models.User
+@{
+    ViewData["Title"] = "إنشاء حساب في رِصّة (مخزن أو مطعم)";
+}
+
+<div class="row justify-content-center my-4">
+    <div class="col-md-9 col-lg-7">
+        <div class="card-rassa p-4 p-md-5">
+            <div class="text-center mb-4">
+                <span class="badge bg-rassa-soft px-3 py-2 mb-2">انضم إلى شبكة التوريد الذكية (30 مخزناً و450 منتجاً)</span>
+                <h3 class="fw-bold text-rassa">إنشاء حساب جديد في رِصّة</h3>
+                <p class="text-muted small">سواء كنت <strong>صاحب مخزن ومورد</strong> أو <strong>صاحب مطعم وكافيه ومخبز</strong>، سجل الآن وابدأ التعامل فوراً</p>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger small">@ViewBag.Error</div>
+            }
+
+            <form asp-action="Register" method="post">
+                <!-- اختيار نوع الحساب: صاحب مطعم/كافيه أم صاحب مخزن/مورد -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-rassa d-block mb-2">1. اختر نوع الحساب الذي تريد تسجيله:</label>
+                    <input type="hidden" name="accountRoleType" id="accountRoleType" value="Client" />
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="activity-option active" id="roleClientBtn" onclick="selectAccountRole('Client')">
+                                <i class="bi bi-shop-window fs-2 d-block mb-1 text-rassa"></i>
+                                <div class="fw-bold">صاحب مطعم / كافيه / مخبز</div>
+                                <small class="text-muted">أبحث عن المخازن القريبة وأطلب التوريدات</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="activity-option" id="roleWarehouseBtn" onclick="selectAccountRole('WarehouseManager')">
+                                <i class="bi bi-boxes fs-2 d-block mb-1 text-warning"></i>
+                                <div class="fw-bold">صاحب مخزن / مورد جملة</div>
+                                <small class="text-muted">أسجل مخزني وأورّد البضائع لأصحاب المطاعم</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">الاسم الكامل / اسم صاحب النشاط أو المخزن</label>
+                    <input type="text" name="FullName" class="form-control" placeholder="مثال: صلاح محمد / كافيه أرابيكا / مخزن النور" required />
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">رقم الهاتف</label>
+                        <input type="text" name="Phone" class="form-control" placeholder="010XXXXXXXX" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">البريد الإلكتروني</label>
+                        <input type="email" name="Email" class="form-control" placeholder="name@example.com" required />
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">الموقع الجغرافي (المنطقة)</label>
+                        <select name="LocationZone" class="form-select">
+                            <option value="القاهرة - مدينة نصر">القاهرة - مدينة نصر</option>
+                            <option value="القاهرة - المعادي">القاهرة - المعادي</option>
+                            <option value="القاهرة - مصر الجديدة">القاهرة - مصر الجديدة</option>
+                            <option value="القاهرة - التجمع الخامس">القاهرة - التجمع الخامس</option>
+                            <option value="الجيزة - الدقي والمهندسين">الجيزة - الدقي والمهندسين</option>
+                            <option value="الجيزة - 6 أكتوبر">الجيزة - 6 أكتوبر</option>
+                            <option value="أسيوط - شارع الجمهورية">أسيوط - شارع الجمهورية</option>
+                            <option value="الإسكندرية - سموحة">الإسكندرية - سموحة</option>
+                            <option value="المنصورة - حي الجامعة">المنصورة - حي الجامعة</option>
+                            <option value="طنطا - شارع البحر">طنطا - شارع البحر</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">كلمة المرور</label>
+                        <input type="password" name="PasswordHash" class="form-control" placeholder="******" required />
+                    </div>
+                </div>
+
+                <!-- قسم خاص بأصحاب المطاعم والكافيهات -->
+                <div id="clientActivitySection" class="mb-4">
+                    <label class="form-label fw-semibold d-block mb-2">نوع النشاط التجاري:</label>
+                    <input type="hidden" name="BusinessType" id="BusinessTypeInput" value="مطعم" />
+                    <div class="row g-2">
+                        <div class="col-3">
+                            <div class="activity-option biz-opt active" onclick="selectType(this, 'مطعم')">
+                                <i class="bi bi-egg-fried fs-3 d-block mb-1"></i>
+                                <span>مطعم</span>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="activity-option biz-opt" onclick="selectType(this, 'كافيه')">
+                                <i class="bi bi-cup-hot-fill fs-3 d-block mb-1"></i>
+                                <span>كافيه</span>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="activity-option biz-opt" onclick="selectType(this, 'مخبز')">
+                                <i class="bi bi-basket2-fill fs-3 d-block mb-1"></i>
+                                <span>مخبز</span>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="activity-option biz-opt" onclick="selectType(this, 'أخرى')">
+                                <i class="bi bi-plus-circle-fill fs-3 d-block mb-1"></i>
+                                <span>أخرى</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- قسم خاص بأصحاب المخازن عند التسجيل -->
+                <div id="warehouseDetailsSection" class="mb-4 p-3 rounded-3 bg-rassa-soft border border-success" style="display:none;">
+                    <h6 class="fw-bold text-rassa mb-3"><i class="bi bi-shop me-1"></i>بيانات المخزن (سيتم تفعيل مخزنك وإضافة 15 منتجاً افتراضياً فوراً):</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">اسم المخزن / شركة التوريد</label>
+                            <input type="text" name="warehouseName" class="form-control" placeholder="مثال: مخزن النور لتوريدات الكافيهات" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">تخصص التوريد</label>
+                            <input type="text" name="warehouseSpecialty" class="form-control" placeholder="مثال: توريد البن والتغليف والصوصات" />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-rassa btn-lg w-100">
+                    <i class="bi bi-check2-circle me-1"></i> إنشاء الحساب والبدء فوراً
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectAccountRole(role) {
+        document.getElementById('accountRoleType').value = role;
+        if (role === 'WarehouseManager') {
+            document.getElementById('roleWarehouseBtn').classList.add('active');
+            document.getElementById('roleClientBtn').classList.remove('active');
+            document.getElementById('warehouseDetailsSection').style.display = 'block';
+            document.getElementById('clientActivitySection').style.display = 'none';
+            document.getElementById('BusinessTypeInput').value = 'مخزن توريد';
+        } else {
+            document.getElementById('roleClientBtn').classList.add('active');
+            document.getElementById('roleWarehouseBtn').classList.remove('active');
+            document.getElementById('warehouseDetailsSection').style.display = 'none';
+            document.getElementById('clientActivitySection').style.display = 'block';
+            document.getElementById('BusinessTypeInput').value = 'مطعم';
+        }
+    }
+
+    function selectType(el, typeVal) {
+        document.querySelectorAll('.biz-opt').forEach(item => item.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('BusinessTypeInput').value = typeVal;
+    }
+</script>
